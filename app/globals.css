@@ -1,0 +1,276 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   FYB Dinner Night — design tokens
+
+   Two references drive this: the printed invitation (deep olive, cream, gold,
+   high-contrast serif with a script accent) and the light, floral register of
+   the wedding-agency layout. So the site is ivory and airy, and the olive and
+   gold from the invitation carry through as the dark and the accent.
+
+   Committed single palette — an invitation has one look, not a light and a
+   dark mode. Every colour is painted explicitly so nothing is inherited from
+   the viewer's theme.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  --ivory:      #FBF8F2;
+  --ivory-warm: #F5EFE4;
+  --paper:      #FFFDF9;
+  --mist:       #F0F2ED;
+
+  /* Olive, straight off the invitation card. */
+  --olive:       #333D2C;
+  --olive-deep:  #232B1E;
+  --olive-soft:  #5C6B51;
+  --sage:        #93A189;
+  --sage-pale:   #DDE3D6;
+
+  --gold:       #B08B33;
+  --gold-light: #E8CF8F;
+  --gold-wash:  #F7EFDA;
+
+  --blush:      #C98B84;
+  --blush-wash: #F6E7E4;
+
+  --ink:       #2A2E26;
+  --ink-soft:  #5E6558;
+  --ink-faint: #8D9386;
+
+  --rule:        #E3DDD0;
+  --rule-strong: #CFC6B4;
+
+  --good:      #4F7A52;
+  --good-wash: #E6EFE4;
+  --danger:      #A8443C;
+  --danger-wash: #F7E5E3;
+
+  --f-display: var(--font-display-loaded), "Cormorant Garamond", Georgia, serif;
+  --f-script: var(--font-script-loaded), "Apple Chancery", cursive;
+  --f-body: var(--font-body-loaded), "Helvetica Neue", Arial, sans-serif;
+  --f-mono: var(--font-mono-loaded), ui-monospace, Menlo, monospace;
+}
+
+@theme inline {
+  --color-ivory: var(--ivory);
+  --color-ivory-warm: var(--ivory-warm);
+  --color-paper: var(--paper);
+  --color-mist: var(--mist);
+
+  --color-olive: var(--olive);
+  --color-olive-deep: var(--olive-deep);
+  --color-olive-soft: var(--olive-soft);
+  --color-sage: var(--sage);
+  --color-sage-pale: var(--sage-pale);
+
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-wash: var(--gold-wash);
+
+  --color-blush: var(--blush);
+  --color-blush-wash: var(--blush-wash);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+
+  --color-good: var(--good);
+  --color-good-wash: var(--good-wash);
+  --color-danger: var(--danger);
+  --color-danger-wash: var(--danger-wash);
+
+  --font-display: var(--f-display);
+  --font-script: var(--f-script);
+  --font-body: var(--f-body);
+  --font-mono: var(--f-mono);
+}
+
+* { box-sizing: border-box; min-width: 0; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--f-display);
+  font-weight: 300;
+  line-height: 1.12;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+  margin: 0;
+  color: var(--olive);
+}
+
+p { margin: 0; }
+a { color: inherit; }
+button, input, textarea, select { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 1.5px solid var(--gold);
+  outline-offset: 3px;
+}
+
+::selection { background: var(--gold-light); color: var(--olive-deep); }
+
+.scroll-x { overflow-x: auto; overscroll-behavior-x: contain; }
+
+/* ------------------------------------------------------------ lettering --- */
+.script {
+  font-family: var(--f-script);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.9;
+  color: var(--gold);
+}
+
+.eyebrow {
+  font-family: var(--f-body);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.numeric {
+  font-family: var(--f-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* A thin rule with a diamond at its centre — the divider the printed
+   invitation uses, and the thing that keeps sections from looking stacked. */
+.flourish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--gold);
+}
+.flourish::before,
+.flourish::after {
+  content: "";
+  height: 1px;
+  width: clamp(28px, 8vw, 70px);
+  background: linear-gradient(to right, transparent, var(--gold-light), transparent);
+}
+.flourish span { font-size: 8px; letter-spacing: 0.4em; }
+
+/* ------------------------------------------------------------- controls --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px 30px;
+  border: 1px solid transparent;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: 0;
+}
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn-primary { background: var(--olive); color: var(--ivory); border-color: var(--olive); }
+.btn-primary:hover:not(:disabled) { background: var(--olive-deep); border-color: var(--olive-deep); }
+
+.btn-gold { background: var(--gold); color: #FFFDF6; border-color: var(--gold); }
+.btn-gold:hover:not(:disabled) { background: #96751F; border-color: #96751F; }
+
+.btn-ghost { background: transparent; color: var(--olive); border-color: var(--rule-strong); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); }
+
+.btn-quiet {
+  background: transparent; color: var(--ink-soft); border-color: transparent;
+  padding: 9px 14px; letter-spacing: 0.12em;
+}
+.btn-quiet:hover:not(:disabled) { color: var(--olive); }
+
+.btn-danger { background: transparent; color: var(--danger); border-color: var(--danger); }
+.btn-danger:hover:not(:disabled) { background: var(--danger-wash); }
+
+/* ---------------------------------------------------------------- forms --- */
+.field {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--paper);
+  border: 1px solid var(--rule-strong);
+  font-size: 15px;
+  font-weight: 300;
+  transition: border-color 0.2s ease;
+  border-radius: 0;
+}
+.field::placeholder { color: var(--ink-faint); font-weight: 300; }
+.field:focus { border-color: var(--gold); outline: none; }
+.field:disabled { opacity: 0.55; }
+
+.label {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  font-family: var(--f-body);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.pill-gold  { background: var(--gold-wash);  color: #8A6C1C;      border-color: var(--gold-light); }
+.pill-olive { background: var(--sage-pale);  color: var(--olive); border-color: var(--sage); }
+.pill-good  { background: var(--good-wash);  color: var(--good);  border-color: var(--good); }
+.pill-danger{ background: var(--danger-wash);color: var(--danger);border-color: var(--danger); }
+.pill-quiet { background: var(--mist);       color: var(--ink-faint); border-color: var(--rule-strong); }
+
+/* ------------------------------------------------------------ animation --- */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+.rise { animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.rise-2 { animation-delay: 0.1s; }
+.rise-3 { animation-delay: 0.2s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
