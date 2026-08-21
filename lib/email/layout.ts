@@ -223,9 +223,16 @@ export function wrap({
         </tr>
       </table>
 
-      <div style="font-family:${SANS};font-size:11px;color:${BRAND.inkFaint};
+      <div style="font-family:${SANS};font-size:11px;line-height:1.7;color:${BRAND.inkFaint};
                   padding-top:18px;max-width:600px;">
         You are receiving this because you registered for the ${escapeHtml(event.eventName)}.
+        ${
+          // Filters look for a visible opt-out in the body, not only the
+          // List-Unsubscribe header. {{UNSUB}} is replaced per recipient at
+          // send time, since the link is signed with their address.
+          `<br><a href="{{UNSUB}}" style="color:${BRAND.inkFaint};text-decoration:underline;">Unsubscribe from these emails</a>
+           &nbsp;·&nbsp; <a href="mailto:support@fybdinnernight.online" style="color:${BRAND.inkFaint};text-decoration:underline;">support@fybdinnernight.online</a>`
+        }
       </div>
 
     </td>
