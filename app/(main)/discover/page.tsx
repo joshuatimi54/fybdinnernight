@@ -6,6 +6,7 @@ import type { DiscoveryCard, Invitation } from "@/lib/types";
 import { timeLeft } from "@/lib/utils";
 import DiscoverGrid from "@/components/DiscoverGrid";
 import SeekingHelpToggle from "@/components/SeekingHelpToggle";
+import FindByUsername from "@/components/FindByUsername";
 
 export const metadata = { title: "Discover" };
 export const dynamic = "force-dynamic";
@@ -118,6 +119,25 @@ export default async function DiscoverPage({
             </div>
           ) : null}
         </header>
+
+        <FindByUsername
+          myUsername={profile.username}
+          invitesLeft={invitesLeft}
+          canInvite={
+            invitesLeft > 0 &&
+            (outstanding ? 1 : 0) < config.max_outstanding_invites
+          }
+          minNoteLength={config.min_love_note_length ?? 40}
+          maxNoteLength={config.max_love_note_length ?? 500}
+        />
+
+        <div className="flex flex-col gap-3 pt-4" style={{ borderTop: "1px solid var(--rule)" }}>
+          <span className="eyebrow">Or Meet Someone New</span>
+          <h2 className="text-[clamp(1.7rem,4vw,2.3rem)] leading-tight">
+            Everyone still
+            <span className="script text-[clamp(2.2rem,5.5vw,3rem)] ml-2">looking</span>
+          </h2>
+        </div>
 
         {/* ------------------------------------------------------ filters */}
         <form className="flex flex-wrap gap-3 items-end" action="/discover">

@@ -47,12 +47,15 @@ export default async function AdminEmailsPage() {
 
   return (
     <div className="flex flex-col gap-9">
-      <div className="flex flex-col gap-3">
-        <p className="text-[15px] max-w-[62ch]" style={{ color: "var(--ink-soft)" }}>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <p className="text-[15px] max-w-[58ch]" style={{ color: "var(--ink-soft)" }}>
           Every email is queued by the transaction that causes it, then sent by
           the cron job a few minutes later. Nothing is sent twice — each one
           carries a dedupe key.
         </p>
+        <Link href="/admin/emails/compose" className="btn btn-primary shrink-0">
+          Write to guests
+        </Link>
       </div>
 
       <div className="grid gap-px grid-cols-2 sm:grid-cols-4" style={{ background: "var(--rule)", border: "1px solid var(--rule)" }}>

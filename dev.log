@@ -163,3 +163,140 @@
  ✓ Compiled in 1191ms (475 modules)
  ✓ Compiled in 1039ms (475 modules)
  ✓ Compiled in 2.3s (1348 modules)
+ ✓ Compiled in 1733ms (1348 modules)
+   Reload env: .env
+ ✓ Compiled in 1041ms (1504 modules)
+   Reload env: .env
+ ✓ Compiled in 1059ms (1504 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, stat 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\cache\webpack\client-development\1.pack.gz'
+[Error: ENOENT: no such file or directory, stat 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\cache\webpack\edge-server-development\0.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\cache\\webpack\\edge-server-development\\0.pack.gz'
+}
+ ⨯ unhandledRejection: [Error: ENOENT: no such file or directory, stat 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\cache\webpack\edge-server-development\0.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\cache\\webpack\\edge-server-development\\0.pack.gz'
+}
+ ⨯ unhandledRejection:  [Error: ENOENT: no such file or directory, stat 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\cache\webpack\edge-server-development\0.pack.gz'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'stat',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\cache\\webpack\\edge-server-development\\0.pack.gz'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, stat 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\cache\webpack\edge-server-development\0.pack.gz'
+   Reload env: .env
+ ✓ Compiled in 1968ms (1504 modules)
+ ✓ Compiled in 803ms (475 modules)
+ ✓ Compiled in 1050ms (475 modules)
+ ✓ Compiled in 1042ms (475 modules)
+ ✓ Compiled in 698ms (475 modules)
+ ✓ Compiled in 973ms (475 modules)
+ ✓ Compiled in 833ms (475 modules)
+ ✓ Compiled in 1077ms (475 modules)
+ ✓ Compiled in 922ms (475 modules)
+ ✓ Compiled in 636ms (475 modules)
+ ✓ Compiled in 2.5s (475 modules)
+ ✓ Compiled in 597ms (475 modules)
+ ✓ Compiled in 5.4s (1348 modules)
+ ✓ Compiled in 707ms (475 modules)
+ ✓ Compiled in 802ms (475 modules)
+ ✓ Compiled in 2.8s (1518 modules)
+ ✓ Compiled in 1513ms (475 modules)
+ ✓ Compiled in 1167ms (475 modules)
+ ✓ Compiled in 591ms (475 modules)
+ ✓ Compiled in 680ms (475 modules)
+ ✓ Compiled in 499ms (475 modules)
+ ✓ Compiled in 729ms (475 modules)
+ ✓ Compiled in 23.8s (475 modules)
+ ✓ Compiled in 17.7s (475 modules)
+ ✓ Compiled in 19.1s (475 modules)
+ ✓ Compiled in 11.7s (475 modules)
+ ✓ Compiled in 6.5s (475 modules)
+ ✓ Compiled in 14.4s (475 modules)
+ ✓ Compiled in 29.6s (475 modules)
+ ✓ Compiled in 66.4s (1350 modules)
+ ✓ Compiled in 1437ms (476 modules)
+ ✓ Compiled in 2.2s (476 modules)
+ ✓ Compiled in 1059ms (476 modules)
+ ✓ Compiled in 598ms (476 modules)
+ ✓ Compiled in 831ms (476 modules)
+ ✓ Compiled in 1490ms (476 modules)
+ ✓ Compiled in 726ms (476 modules)
+ ✓ Compiled in 549ms (476 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\middleware-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\middleware-manifest.json'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 5.3s (1432 modules)
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\middleware-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\middleware-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\pages\\_document.js'
+}
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 8.2s (1437 modules)
+[Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\middleware-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\middleware-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\middleware-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\middleware-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\PROGRESSIVE\\Documents\\Code\\Easeinbiz company\\client\\CACCF\\.next\\routes-manifest.json'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\cache\webpack\client-development-fallback\0.pack.gz_' -> 'C:\Users\PROGRESSIVE\Documents\Code\Easeinbiz company\client\CACCF\.next\cache\webpack\client-development-fallback\0.pack.gz'
+ ✓ Compiled in 863ms (476 modules)
+ ✓ Compiled in 1150ms (476 modules)
+ ✓ Compiled in 493ms (476 modules)
+ ✓ Compiled in 505ms (476 modules)
+ ✓ Compiled in 725ms (476 modules)
+ ✓ Compiled in 1894ms (476 modules)
+ ✓ Compiled in 818ms (476 modules)
+ ✓ Compiled in 510ms (476 modules)

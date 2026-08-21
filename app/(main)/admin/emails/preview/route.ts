@@ -27,6 +27,13 @@ const SAMPLES: Record<string, Record<string, unknown>> = {
   still_looking: { days_left: 3, others_looking: 42, seeking_help: false },
   event_reminder: { table_label: "Table 7" },
   profile_approved: {},
+  broadcast: {
+    subject: "The venue has moved",
+    body: "We've had to move the dinner to the main auditorium — the original room turned out to be too small for the number of pairs we now have.\n\nEverything else is exactly as it was: same date, same time, same table numbers. Your pass already shows the new venue.\n\nSee you there.",
+    cta_label: "Open my pass",
+    cta_path: "/pass",
+    is_test: false,
+  },
 };
 
 export async function GET(request: Request) {

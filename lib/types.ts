@@ -18,6 +18,7 @@ export type Profile = {
   id: string;
   first_name: string;
   last_name: string;
+  username: string | null;
   gender: Gender | null;
   phone: string | null;
   email: string;
@@ -42,6 +43,7 @@ export type DiscoveryCard = {
   id: string;
   first_name: string;
   last_initial: string;
+  username?: string | null;
   photo_url: string | null;
   bio: string | null;
   prompts: Prompt[];
@@ -149,12 +151,3 @@ export type WallPair = {
   confirmed_at: string;
 };
 
-/** The three questions that make discovery about what someone wrote. */
-export const PROMPT_QUESTIONS = [
-  "My ideal table conversation is…",
-  "The one song that gets me on the floor…",
-  "I'm the friend who always…",
-  "The way to my heart at dinner is…",
-  "Something that always makes me laugh…",
-  "If you sit with me, expect…",
-] as const;

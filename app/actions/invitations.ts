@@ -72,6 +72,27 @@ export async function respondToInvitation(
   return { ok: true, accepted: false, reason: result?.reason ?? "DECLINED" };
 }
 
+export type FindResult =
+  | { ok: true; result: unknown }
+  | { ok: false; error: string };
+
+/** Look someone up by the handle they gave you. */
+export async function findByUsername(username: string): Promise<FindResult> {
+  const clean = username.trim().replace(/^@/, "").toLowerCase();
+
+  if (!/^[a-z][a-z0-9_]{2,19}$/.test(clean)) {
+    return { ok: true, result: { status: "not_found" } };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("find_by_username", {
+    p_username: clean,
+  });
+
+  if (error) return { ok: false, error: friendlyError(error) };
+  return { ok: true, result: data };
+}
+
 export async function withdrawInvitation(invitationId: string): Promise<ActionResult> {
   if (!z.string().uuid().safeParse(invitationId).success) {
     return { ok: false, error: "We couldn't find that invitation." };

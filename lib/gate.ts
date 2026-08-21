@@ -16,8 +16,10 @@ export function destinationFor(profile: Profile | null): string {
     case "draft":
       return "/onboarding";
     case "pending":
+      // No review queue any more; anything left pending goes straight in.
+      return "/dashboard";
     case "rejected":
-      return "/pending";
+      return "/onboarding";
     case "approved":
       // Everyone lands on the dashboard rather than straight into discovery:
       // it shows your profile, your date if you have one, and the single next

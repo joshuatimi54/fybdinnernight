@@ -18,6 +18,8 @@ const MESSAGES: Record<string, string> = {
   GENDER_REQUIRED: "Select whether you're attending as a gentleman or a lady.",
   PHONE_REQUIRED: "Add a phone number so the committee can reach you.",
   PHOTO_REQUIRED: "Add a photo to finish your profile.",
+  USERNAME_REQUIRED: "Pick a username so your date can find you.",
+  USERNAME_TAKEN: "Somebody already has that username. Try another.",
   GENDER_LOCKED: "Gender can't be changed after your profile is approved.",
   PROFILE_NOT_FOUND: "We couldn't find that profile.",
   NOT_APPROVED: "Your profile is still being reviewed.",
@@ -58,6 +60,14 @@ const MESSAGES: Record<string, string> = {
   TABLE_FULL: "That table just filled up. Pick another one.",
   PAIR_NOT_FOUND: "We couldn't find that pair.",
   NOT_CONFIRMED: "That pair isn't confirmed.",
+
+  // Broadcasts
+  SUBJECT_TOO_SHORT: "Give the email a subject.",
+  SUBJECT_TOO_LONG: "That subject line is too long for an inbox.",
+  BODY_TOO_SHORT: "Write a little more before sending this to people.",
+  BODY_TOO_LONG: "That message is too long. Trim it, or link to a page instead.",
+  UNKNOWN_SEGMENT: "Pick who this is going to.",
+  CTA_PATH_MUST_BE_RELATIVE: "The button link must stay on this site — start it with /",
 
   // Door
   PASS_NOT_FOUND: "No pass matches that code.",

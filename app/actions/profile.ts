@@ -12,6 +12,11 @@ const profileSchema = z.object({
   first_name: z.string().trim().min(1, "Add your first name").max(40),
   last_name: z.string().trim().min(1, "Add your surname").max(40),
   gender: z.enum(["male", "female"]),
+  username: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(/^[a-z][a-z0-9_]{2,19}$/, "Pick a username: 3-20 characters, starting with a letter."),
   phone: z.string().trim().min(7, "Add a reachable phone number").max(24),
   photo_url: z.string().trim().url().or(z.literal("")).nullable().optional(),
   bio: z.string().trim().max(140).optional().nullable(),
@@ -46,6 +51,7 @@ export async function saveProfile(input: unknown): Promise<ActionResult> {
       first_name: v.first_name,
       last_name: v.last_name,
       gender: v.gender,
+      username: v.username,
       phone: v.phone,
       photo_url: v.photo_url || null,
       bio: v.bio || null,

@@ -47,6 +47,7 @@ truncate audit_log;
 -- second run trips the unique label index.
 truncate tables cascade;
 truncate email_outbox;
+truncate broadcasts;
 
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-00000000000a', 'adam@test'),
@@ -64,6 +65,7 @@ update profiles set
   gender     = (case when email in ('adam@test','ben@test','carl@test','admin@test')
                      then 'male' else 'female' end)::gender_t,
   review_status = 'approved',
+  username   = split_part(email, '@', 1),
   photo_url  = 'https://example.test/p.jpg';
 
 -- Gender is set above in the same statement as approval; changing it
@@ -610,6 +612,254 @@ select t_assert(
 );
 
 \echo ''
+\echo '=== 19. Committee broadcasts ==='
+
+select be('00000000-0000-0000-0000-00000000000c');
+select t_expect_error(
+  $$select admin_broadcast('Hello there', 'This is a long enough body to pass.', 'everyone')$$,
+  'FORBIDDEN',
+  'A guest cannot broadcast to everyone'
+);
+
+select be('00000000-0000-0000-0000-000000000099');
+
+select t_expect_error(
+  $$select admin_broadcast('Hi', 'This is a long enough body to pass.', 'everyone')$$,
+  'SUBJECT_TOO_SHORT', 'A broadcast needs a real subject');
+
+select t_expect_error(
+  $$select admin_broadcast('A good subject', 'too short', 'everyone')$$,
+  'BODY_TOO_SHORT', 'A broadcast needs a real body');
+
+select t_expect_error(
+  $$select admin_broadcast('A good subject', 'A body that is long enough.', 'nonsense')$$,
+  'UNKNOWN_SEGMENT', 'An unknown segment is refused');
+
+-- An admin must not be able to mail 300 people a link to another site.
+select t_expect_error(
+  $$select admin_broadcast('A good subject', 'A body that is long enough.',
+                           'everyone', 'Click', 'https://evil.example')$$,
+  'CTA_PATH_MUST_BE_RELATIVE',
+  'A broadcast button cannot link off-site'
+);
+
+select t_assert(
+  (select count(*) from broadcasts) = 0,
+  'None of those rejected attempts recorded a broadcast'
+);
+
+-- Test sends reach the author only.
+select t_assert(
+  (admin_broadcast('Testing the pipes', 'This is a test of the broadcast system.',
+                   'everyone', null, null, true) ->> 'recipients')::int = 1,
+  'A test send goes to exactly one person — the admin who wrote it'
+);
+
+select t_assert(
+  (select to_email from email_outbox
+    where template = 'broadcast' order by id desc limit 1) = 'admin@test',
+  'And that person is the author'
+);
+
+-- A real send reaches the segment.
+select t_assert(
+  (admin_broadcast('Three days left', 'Please find a date before the deadline.',
+                   'unpaired') ->> 'recipients')::int
+    = (select count(*)::int from broadcast_audience('unpaired')),
+  'A real send reaches exactly the segment it named'
+);
+
+select t_assert(
+  (select count(*) from email_outbox e1
+    where e1.template = 'broadcast'
+      and exists (select 1 from email_outbox e2
+                   where e2.dedupe_key = e1.dedupe_key and e2.id <> e1.id)) = 0,
+  'No broadcast recipient is queued twice'
+);
+
+-- Opting out has to hold here too, or the whole setting is decorative.
+update profiles set email_opt_out = true where email = 'dara@test';
+select t_assert(
+  not exists (select 1 from broadcast_audience('everyone') a where a.id =
+    (select id from profiles where email = 'dara@test')),
+  'Someone opted out is excluded from every segment'
+);
+update profiles set email_opt_out = false where email = 'dara@test';
+
+select t_assert(
+  not exists (
+    select 1 from broadcast_audience('everyone') a
+      join profiles p on p.id = a.id
+     where p.review_status <> 'approved'
+  ),
+  'Unapproved profiles are never in the "everyone" segment'
+);
+
+\echo ''
+\echo '=== 20. Usernames - the handle you send your date ==='
+
+-- Ben, whose pair was dissolved in section 14, so he is approved and free.
+select be('00000000-0000-0000-0000-00000000000b');
+
+select t_assert(
+  (find_by_username('dara') ->> 'status') = 'available',
+  'Ben can find Dara by her username'
+);
+
+select t_assert(
+  (find_by_username('@dara') ->> 'status') = 'available',
+  'A leading @ is tolerated - people paste it that way'
+);
+
+select t_assert(
+  (find_by_username('DARA') ->> 'status') = 'available',
+  'Lookup is case-insensitive'
+);
+
+select t_assert(
+  (find_by_username('  dara  ') ->> 'status') = 'available',
+  'Stray whitespace is tolerated too'
+);
+
+select t_assert(
+  (find_by_username('nobody_here') ->> 'status') = 'not_found',
+  'An unknown handle says so plainly'
+);
+
+select t_assert(
+  (find_by_username('ben') ->> 'status') = 'yourself',
+  'You cannot look up yourself'
+);
+
+select t_assert(
+  (find_by_username('carl') ->> 'status') = 'same_gender',
+  'Same-gender lookups are named plainly - it is a rule, not a judgement'
+);
+
+select t_assert(
+  (find_by_username('dara') -> 'profile' ->> 'first_name') = 'Dara',
+  'An available result carries the card'
+);
+
+-- The card must not leak what discovery hides.
+select t_assert(
+  not (find_by_username('dara') -> 'profile' ? 'phone')
+  and not (find_by_username('dara') -> 'profile' ? 'email')
+  and not (find_by_username('dara') -> 'profile' ? 'last_name'),
+  'The card carries no phone, email or surname'
+);
+
+-- Paired, unapproved and blocked all collapse to one neutral answer, so a
+-- lookup cannot be used to work out why somebody is out of the running.
+select t_assert(
+  (find_by_username('faith') ->> 'status') = 'unavailable',
+  'Someone already paired reads as simply unavailable'
+);
+
+update profiles set review_status = 'pending' where email = 'ella@test';
+select t_assert(
+  (find_by_username('ella') ->> 'status') = 'unavailable',
+  'Someone awaiting review reads exactly the same - the two are indistinguishable'
+);
+update profiles set review_status = 'approved' where email = 'ella@test';
+
+insert into blocks (blocker_id, blocked_id)
+values ('00000000-0000-0000-0000-0000000000e0', '00000000-0000-0000-0000-00000000000b');
+select t_assert(
+  (find_by_username('ella') ->> 'status') = 'unavailable',
+  'And so does someone who blocked you'
+);
+delete from blocks;
+
+-- Uniqueness and shape are the database's job, not the form's. Run these as
+-- an admin, who bypasses the lock guard -- the constraints themselves are
+-- what is under test, not who may edit them.
+select be('00000000-0000-0000-0000-000000000099');
+
+select t_expect_error(
+  $$update profiles set username = 'dara' where email = 'ella@test'$$,
+  'profiles_username_key', 'Two people cannot share a username');
+
+select t_expect_error(
+  $$update profiles set username = '9nope' where email = 'ella@test'$$,
+  'profiles_username_format', 'A username must start with a letter');
+
+select t_expect_error(
+  $$update profiles set username = 'ab' where email = 'ella@test'$$,
+  'profiles_username_format', 'Two characters is too short');
+
+select t_expect_error(
+  $$update profiles set username = 'has spaces' where email = 'ella@test'$$,
+  'profiles_username_format', 'Spaces are refused');
+
+update profiles set username = '  MiXeDcAsE  ' where email = 'ella@test';
+select t_assert(
+  (select username from profiles where email = 'ella@test') = 'mixedcase',
+  'Usernames are trimmed and lowercased on the way in'
+);
+update profiles set username = 'ella' where email = 'ella@test';
+
+select be('00000000-0000-0000-0000-00000000000b');
+select t_assert(username_available('brand_new_one'), 'A free username reads as available');
+select t_assert(not username_available('dara'),      'A taken one does not');
+select t_assert(not username_available('!!'),        'An invalid one does not either');
+
+select t_assert(
+  suggest_username() ~ '^[a-z][a-z0-9_]{2,19}$',
+  'The suggestion is always a valid username'
+);
+
+\echo ''
+\echo '=== 21. Registration goes straight through - no review queue ==='
+
+-- Reset as admin: clearing the username on an approved row is itself blocked
+-- by the lock guard, which is exactly the behaviour section 21 goes on to assert.
+select be('00000000-0000-0000-0000-000000000099');
+update profiles set review_status = 'draft', username = null where email = 'ella@test';
+
+select be('00000000-0000-0000-0000-0000000000e0');
+
+select t_expect_error(
+  $$select submit_profile_for_review()$$,
+  'USERNAME_REQUIRED',
+  'A profile cannot be registered without a username'
+);
+
+update profiles set username = 'ella' where email = 'ella@test';
+
+select t_assert(
+  (submit_profile_for_review() ->> 'status') = 'approved',
+  'Registering approves immediately - there is no review queue'
+);
+
+select t_assert(
+  (select review_status from profiles where email = 'ella@test') = 'approved',
+  'And the row really says approved'
+);
+
+select t_assert(
+  (submit_profile_for_review() ->> 'status') = 'approved',
+  'Saving again is a no-op rather than an error'
+);
+
+select t_assert(
+  exists (select 1 from audit_log where action = 'profile.registered'),
+  'Registration is written to the audit log'
+);
+
+select t_expect_error(
+  $$update profiles set username = 'ella_two' where email = 'ella@test'$$,
+  'USERNAME_LOCKED',
+  'A username cannot change once you are registered'
+);
+
+select t_expect_error(
+  $$update profiles set gender = 'male' where email = 'ella@test'$$,
+  'GENDER_LOCKED',
+  'Nor can gender - it decides who sees whom'
+);
+
+
 \echo '======================================================'
 \echo ' ALL TESTS PASSED'
 \echo '======================================================'

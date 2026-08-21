@@ -59,9 +59,6 @@ export default function AppNav({ profile }: { profile: NavProfile }) {
           {links.map((l) => (
             <NavLink key={l.href} {...l} active={pathname === l.href} />
           ))}
-          {profile.isAdmin ? (
-            <NavLink href="/admin" label="Admin" active={pathname.startsWith("/admin")} />
-          ) : null}
           <form action={signOut}>
             <button type="submit" className="btn btn-quiet text-[13px]">
               Sign out
@@ -102,15 +99,6 @@ export default function AppNav({ profile }: { profile: NavProfile }) {
               block
             />
           ))}
-          {profile.isAdmin ? (
-            <NavLink
-              href="/admin"
-              label="Admin"
-              active={pathname.startsWith("/admin")}
-              onClick={() => setOpen(false)}
-              block
-            />
-          ) : null}
           <form action={signOut}>
             <button type="submit" className="btn btn-quiet w-full justify-start">
               Sign out

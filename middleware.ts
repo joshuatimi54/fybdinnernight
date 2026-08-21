@@ -4,7 +4,6 @@ import { NextResponse, type NextRequest } from "next/server";
 const PROTECTED = [
   "/dashboard",
   "/onboarding",
-  "/pending",
   "/discover",
   "/invitations",
   "/pair",

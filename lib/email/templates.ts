@@ -298,6 +298,52 @@ export function render(
         }),
       };
 
+    // ------------------------------------------------------- broadcast --
+    // Committee-written copy, dropped into the same stationery as everything
+    // else. The body is escaped and only line breaks are honoured — an admin
+    // account must not be able to inject markup into 300 inboxes, even by
+    // accident with a stray angle bracket.
+    case "broadcast": {
+      const subject = str(payload, "subject", event.eventName);
+      const raw = str(payload, "body");
+      const ctaLabel = str(payload, "cta_label");
+      const ctaPath = str(payload, "cta_path");
+      const isTest = payload.is_test === true;
+
+      const paragraphs = raw
+        .split(/\n{2,}/)
+        .map((block) => block.trim())
+        .filter(Boolean)
+        .map((block) => paragraph(escapeHtml(block).replace(/\n/g, "<br>")))
+        .join("");
+
+      const cta =
+        ctaLabel && ctaPath
+          ? button(`${url}${ctaPath.startsWith("/") ? ctaPath : `/${ctaPath}`}`, ctaLabel)
+          : "";
+
+      return {
+        subject: isTest ? `[Test] ${subject}` : subject,
+        html: wrap({
+          preheader: raw.replace(/\s+/g, " ").slice(0, 140),
+          eyebrow: "From The Committee",
+          heading: subject,
+          event,
+          body:
+            (isTest
+              ? `<div style="background:${BRAND.goldWash};border:1px solid ${BRAND.goldLight};
+                             padding:12px 16px;margin-bottom:22px;font-family:Arial,sans-serif;
+                             font-size:12px;color:${BRAND.gold};letter-spacing:1px;">
+                   TEST SEND — only you received this.
+                 </div>`
+              : "") +
+            paragraph(`${name},`) +
+            paragraphs +
+            cta,
+        }),
+      };
+    }
+
     default:
       return null;
   }
@@ -316,4 +362,5 @@ export const TEMPLATE_NAMES = [
   "table_assigned",
   "still_looking",
   "event_reminder",
+  "broadcast",
 ] as const;

@@ -175,7 +175,9 @@ export default async function DashboardPage() {
       label: hasAsked ? "You wrote a love note" : "Write your first love note",
       detail: hasAsked
         ? `You have asked ${profile.invites_sent_count} ${profile.invites_sent_count === 1 ? "person" : "people"} so far. ${invitesLeft} ${invitesLeft === 1 ? "invitation" : "invitations"} left.`
-        : "Nobody gets invited to this dinner with a tap. Find someone, write them something real, and ask.",
+        : profile.username
+          ? `Already have a date? Send them your username, @${profile.username}, and look them up once they register. Otherwise, browse and ask someone new.`
+          : "Nobody gets invited to this dinner with a tap. Find someone, write them something real, and ask.",
       state: hasAsked || paired ? "done" : "current",
       href: "/discover",
       cta: "Find someone to ask",
@@ -288,6 +290,8 @@ export default async function DashboardPage() {
             eyebrow="Your Profile"
             profile={profile}
             meta={[
+              // First, because it is the thing they need to send someone.
+              { k: "Your username", v: profile.username ? `@${profile.username}` : "Not set" },
               { k: "Invitations left", v: String(invitesLeft) },
               {
                 k: "Waiting on them",

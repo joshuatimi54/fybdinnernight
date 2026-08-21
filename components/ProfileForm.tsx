@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { saveProfile, submitProfile } from "@/app/actions/profile";
 import PhotoUpload from "@/components/PhotoUpload";
-import { PROMPT_QUESTIONS, type Profile } from "@/lib/types";
+import UsernameField from "@/components/UsernameField";
+import type { Profile } from "@/lib/types";
 
-type PromptRow = { q: string; a: string };
 
 export default function ProfileForm({
   profile,
@@ -23,18 +23,12 @@ export default function ProfileForm({
   const [lastName, setLastName] = useState(profile.last_name);
   const [gender, setGender] = useState<"male" | "female" | "">(profile.gender ?? "");
   const [phone, setPhone] = useState(profile.phone ?? "");
+  const [username, setUsername] = useState(profile.username ?? "");
   const [photo, setPhoto] = useState<string | null>(profile.photo_url);
   const [bio, setBio] = useState(profile.bio ?? "");
   const [department, setDepartment] = useState(profile.department ?? "");
   const [level, setLevel] = useState(profile.level ?? "");
 
-  const [prompts, setPrompts] = useState<PromptRow[]>(() => {
-    const existing = Array.isArray(profile.prompts) ? profile.prompts : [];
-    return [0, 1, 2].map((i) => ({
-      q: existing[i]?.q ?? PROMPT_QUESTIONS[i],
-      a: existing[i]?.a ?? "",
-    }));
-  });
 
   // Gender decides who sees whom, so it is fixed once the committee has
   // approved the profile as reviewed.
@@ -46,11 +40,12 @@ export default function ProfileForm({
       last_name: lastName,
       gender: gender || undefined,
       phone,
+      username,
       photo_url: photo ?? "",
       bio,
       department,
       level,
-      prompts: prompts.filter((p) => p.a.trim().length > 0),
+      prompts: [],
     };
   }
 
@@ -79,7 +74,7 @@ export default function ProfileForm({
         return;
       }
 
-      router.push("/pending");
+      router.push("/onboarding?step=date");
       router.refresh();
     });
   }
@@ -89,6 +84,7 @@ export default function ProfileForm({
   if (!lastName.trim()) missing.push("surname");
   if (!gender) missing.push("gender");
   if (phone.trim().length < 7) missing.push("phone number");
+  if (!/^[a-z][a-z0-9_]{2,19}$/.test(username.trim())) missing.push("username");
   if (requirePhoto && !photo) missing.push("photo");
 
   return (
@@ -126,6 +122,12 @@ export default function ProfileForm({
             />
           </div>
         </div>
+
+        <UsernameField
+          value={username}
+          onChange={setUsername}
+          locked={profile.review_status === "approved"}
+        />
 
         <fieldset className="flex flex-col gap-2 border-0 p-0 m-0">
           <legend className="label">I&apos;m attending as</legend>
@@ -196,67 +198,27 @@ export default function ProfileForm({
         </div>
       </section>
 
-      {/* ------------------------------------------------------- prompts */}
-      <section className="flex flex-col gap-6 border-t border-rule pt-9">
+      {/* ----------------------------------------------------------- bio */}
+      <section className="flex flex-col gap-5 pt-9" style={{ borderTop: "1px solid var(--rule)" }}>
         <div className="flex flex-col gap-2">
           <span className="eyebrow">In your words</span>
-          <h2 className="text-2xl">Give people something to reply to</h2>
-          <p className="text-[15px] text-ink-soft max-w-[52ch]">
-            This is what people actually read before they invite someone. A
-            good answer gets you asked far more than a good photo does.
+          <h2 className="text-2xl">One line about you</h2>
+          <p className="text-[14.5px] max-w-[52ch]" style={{ color: "var(--ink-soft)" }}>
+            Optional, and worth doing. It is the only thing on your card that
+            sounds like a person rather than a form.
           </p>
         </div>
 
         <div>
-          <label className="label" htmlFor="bio">One line about you</label>
+          <label className="label" htmlFor="bio">About you</label>
           <input
             id="bio" className="field" maxLength={140}
             value={bio} onChange={(e) => setBio(e.target.value)}
-            placeholder="Optional, 140 characters"
+            placeholder="Final year, tired, but showing up anyway."
           />
-          <p className="text-[12px] text-ink-faint mt-1.5 numeric">
+          <p className="text-[12px] mt-1.5 numeric" style={{ color: "var(--ink-faint)" }}>
             {bio.length}/140
           </p>
-        </div>
-
-        <div className="flex flex-col gap-5">
-          {prompts.map((row, i) => (
-            <div key={i} className="flex flex-col gap-2">
-              <label className="label" htmlFor={`prompt-${i}`}>
-                Prompt {i + 1}
-              </label>
-              <select
-                className="field"
-                value={row.q}
-                aria-label={`Question for prompt ${i + 1}`}
-                onChange={(e) => {
-                  const next = [...prompts];
-                  next[i] = { ...next[i], q: e.target.value };
-                  setPrompts(next);
-                }}
-              >
-                {PROMPT_QUESTIONS.map((q) => (
-                  <option key={q} value={q}>{q}</option>
-                ))}
-              </select>
-              <textarea
-                id={`prompt-${i}`}
-                className="field resize-y min-h-[72px]"
-                maxLength={160}
-                rows={2}
-                value={row.a}
-                placeholder="Your answer"
-                onChange={(e) => {
-                  const next = [...prompts];
-                  next[i] = { ...next[i], a: e.target.value };
-                  setPrompts(next);
-                }}
-              />
-              <span className="text-[12px] text-ink-faint numeric self-end">
-                {row.a.length}/160
-              </span>
-            </div>
-          ))}
         </div>
       </section>
 
@@ -274,7 +236,7 @@ export default function ProfileForm({
             className="btn btn-primary"
             disabled={pending || missing.length > 0}
           >
-            {pending ? "Sending…" : "Send for review"}
+            {pending ? "Saving…" : "Save and continue"}
           </button>
           <button
             type="button"
@@ -286,9 +248,9 @@ export default function ProfileForm({
           </button>
         </div>
 
-        <p className="text-[13px] text-ink-faint max-w-[56ch]">
-          The committee reviews every profile before it appears to anyone else.
-          It usually takes a few hours.
+        <p className="text-[13px] max-w-[56ch]" style={{ color: "var(--ink-faint)" }}>
+          You are in as soon as you save. Next comes the part that actually
+          reserves your seat — your date.
         </p>
       </section>
     </form>
