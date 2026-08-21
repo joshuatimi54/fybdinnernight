@@ -1,0 +1,116 @@
+<!--
+  =========================================================================
+  Supabase → Authentication → Email Templates → Magic Link
+  =========================================================================
+  Paste this whole block into the "Message body" field, and set the subject to:
+
+      Your FYB Dinner Night code
+
+  {{ .Token }} is what turns Supabase's magic link into a six-digit code.
+  It matters: a link opened from WhatsApp lands in a different browser from
+  the one that started sign-in, and then nothing works. A code you can read
+  and type has no such problem.
+  =========================================================================
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="color-scheme" content="light only">
+<title>Your FYB Dinner Night code</title>
+</head>
+<body style="margin:0;padding:0;background-color:#FBF8F2;">
+
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+  Your six-digit code for the FYB Dinner Night.
+</div>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FBF8F2;">
+  <tr>
+    <td align="center" style="padding:32px 14px;">
+
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0"
+             style="width:600px;max-width:100%;background-color:#FFFDF9;border:1px solid #E3DDD0;">
+
+        <tr>
+          <td align="center" bgcolor="#333D2C" style="background-color:#333D2C;padding:30px 24px 26px;">
+            <div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;letter-spacing:6px;color:#FBF8F2;">FYB</div>
+            <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:8.5px;letter-spacing:4px;text-transform:uppercase;color:#E8CF8F;padding-top:7px;">
+              Dinner Night
+            </div>
+          </td>
+        </tr>
+        <tr><td style="height:3px;background-color:#B08B33;line-height:3px;">&nbsp;</td></tr>
+
+        <tr>
+          <td style="padding:40px 40px 0;">
+            <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:9.5px;letter-spacing:3.2px;text-transform:uppercase;color:#B08B33;padding-bottom:14px;">
+              Sign In
+            </div>
+            <h1 style="margin:0 0 22px;font-family:Georgia,'Times New Roman',serif;font-size:32px;line-height:1.2;font-weight:normal;color:#333D2C;">
+              Your code is <span style="font-style:italic;color:#B08B33;">below</span>
+            </h1>
+            <p style="margin:0 0 16px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:15px;line-height:1.75;color:#5E6558;">
+              Enter these six digits to sign in. No password to remember.
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:0 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="background-color:#F7EFDA;border:1px solid #E8CF8F;">
+              <tr>
+                <td align="center" style="padding:30px 20px;">
+                  <div style="font-family:'Courier New',Courier,monospace;font-size:40px;letter-spacing:14px;color:#333D2C;font-weight:bold;">
+                    {{ .Token }}
+                  </div>
+                  <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#B08B33;padding-top:14px;">
+                    Expires in one hour
+                  </div>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="padding:26px 40px 34px;">
+            <p style="margin:0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.75;color:#8D9386;">
+              If you didn't ask to sign in, you can ignore this email — nothing
+              will happen without the code.
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td bgcolor="#F5EFE4" style="background-color:#F5EFE4;padding:26px 40px;border-top:1px solid #E3DDD0;">
+            <div style="font-family:Georgia,'Times New Roman',serif;font-size:18px;color:#333D2C;padding-bottom:6px;">
+              No date, no dinner.
+            </div>
+            <div style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:12.5px;line-height:1.7;color:#5E6558;">
+              Nobody attends this one alone. Once you're in, write someone a
+              love note and ask them properly.
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <td bgcolor="#232B1E" style="background-color:#232B1E;padding:18px 40px;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td style="font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:10.5px;letter-spacing:1px;color:#93A189;">CACCF</td>
+                <td align="right" style="font-family:Georgia,serif;font-size:13px;font-style:italic;color:#E8CF8F;">#FYBDinnerNight</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
+</body>
+</html>

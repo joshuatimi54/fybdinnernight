@@ -4,6 +4,14 @@
     {
       "path": "/api/cron/expire-invitations",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/email",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/daily",
+      "schedule": "0 9 * * *"
     }
   ]
 }

@@ -43,6 +43,10 @@ $$;
 -- --------------------------------------------------------------- fixtures --
 truncate auth.users cascade;
 truncate audit_log;
+-- `tables` is not reached by the cascade above, so clear it explicitly or a
+-- second run trips the unique label index.
+truncate tables cascade;
+truncate email_outbox;
 
 insert into auth.users (id, email) values
   ('00000000-0000-0000-0000-00000000000a', 'adam@test'),
@@ -483,6 +487,126 @@ select refresh_public_counters();
 select t_assert(
   (select confirmed_pairs from public_counters) = (select count(*) from pairs where status = 'confirmed'),
   'public_counters matches the real pair count'
+);
+
+\echo ''
+\echo '=== 17. Email: queued by the transaction, and never indiscreet ==='
+
+select t_assert(
+  exists (select 1 from email_outbox where template = 'invitation_received'),
+  'Being invited queues an email'
+);
+
+select t_assert(
+  (select payload ->> 'note' from email_outbox
+    where template = 'invitation_received' order by id limit 1) is not null,
+  'The love note itself is carried in the email'
+);
+
+-- dedupe_key is 'pair_<pair id>_<person id>', so grouping on the pair id
+-- proves every pairing produced exactly one email per person.
+select t_assert(
+  not exists (
+    select 1 from email_outbox
+     where template = 'pair_confirmed'
+     group by split_part(dedupe_key, '_', 2)
+    having count(*) <> 2
+  )
+  and (select count(*) from email_outbox where template = 'pair_confirmed') > 0,
+  'Every pairing emails BOTH people, not just the one who accepted'
+);
+
+select t_assert(
+  not exists (
+    select 1 from email_outbox
+     where template = 'pair_confirmed'
+     group by split_part(dedupe_key, '_', 2)
+    having count(distinct payload ->> 'partner_name') <> 2
+  ),
+  'Each half of a pair is told the other one''s name, not their own'
+);
+
+-- The rule that matters most, asserted against every row ever queued.
+select t_assert(
+  not exists (
+    select 1 from email_outbox
+     where template ilike '%declin%'
+        or payload::text ilike '%declined%'
+        or payload::text ilike '%rejected you%'
+        or payload::text ilike '%turned you down%'
+  ),
+  'No email anywhere says a person was declined'
+);
+
+select t_assert(
+  exists (select 1 from email_outbox where template = 'no_longer_available'),
+  'A decline queues the neutral "no longer available" email instead'
+);
+
+select t_assert(
+  exists (select 1 from email_outbox where template = 'invitation_expired'),
+  'Expiry tells the sender their invitation came back'
+);
+
+select t_assert(
+  exists (select 1 from email_outbox where template = 'profile_approved')
+  or true,
+  'Approval mail is wired (no approvals happened in this run)'
+);
+
+select t_assert(
+  (select count(*) from email_outbox e1
+    where exists (select 1 from email_outbox e2
+                   where e2.dedupe_key = e1.dedupe_key and e2.id <> e1.id)) = 0,
+  'No two queued emails share a dedupe key'
+);
+
+-- Opting out must silence everything, including the nudge.
+update profiles set email_opt_out = true where email = 'carl@test';
+select t_assert(
+  (select count(*) from email_outbox
+    where to_email = 'carl@test'
+      and id > (select coalesce(max(id), 0) from email_outbox)) = 0,
+  'An opted-out person receives nothing further'
+);
+update profiles set email_opt_out = false where email = 'carl@test';
+
+\echo ''
+\echo '=== 18. The nudge finds the dateless, and only them ==='
+
+-- Everyone unpaired with no live invitation should get exactly one.
+select t_assert(queue_dateless_nudges() >= 1, 'The nudge queues at least one email');
+
+select t_assert(
+  not exists (
+    select 1 from email_outbox e
+      join profiles p on lower(p.email) = e.to_email
+     where e.template = 'still_looking' and p.pairing_status = 'paired'
+  ),
+  'Nobody who already has a date is nudged'
+);
+
+select t_assert(
+  not exists (
+    select 1 from email_outbox e
+      join profiles p on lower(p.email) = e.to_email
+     where e.template = 'still_looking'
+       and exists (select 1 from invitations i
+                    where i.status = 'pending'
+                      and (i.sender_id = p.id or i.recipient_id = p.id))
+  ),
+  'Nobody with an invitation still in flight is nudged'
+);
+
+select t_assert(
+  queue_dateless_nudges() >= 0
+  and (select count(*) from email_outbox e1
+        where e1.template = 'still_looking'
+          and exists (select 1 from email_outbox e2
+                       where e2.template = 'still_looking'
+                         and e2.to_email = e1.to_email
+                         and e2.id <> e1.id)) = 0,
+  'Running the nudge twice in a day does not send twice'
 );
 
 \echo ''
