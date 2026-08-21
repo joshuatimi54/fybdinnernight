@@ -45,14 +45,33 @@ export default function PhotoUpload({
         { method: "POST", body: form },
       );
 
-      if (!res.ok) throw new Error("upload failed");
-      const json = (await res.json()) as { secure_url?: string };
-      if (!json.secure_url) throw new Error("no url");
+      const json = (await res.json().catch(() => null)) as {
+        secure_url?: string;
+        error?: { message?: string };
+      } | null;
+
+      if (!res.ok || !json?.secure_url) {
+        // Cloudinary explains itself in the body. Swallowing that message is
+        // why a misconfigured preset looks identical to a dropped connection
+        // — the guest sees "try again" and tries again forever.
+        const detail = json?.error?.message ?? `HTTP ${res.status}`;
+        console.error("Cloudinary upload failed:", detail);
+
+        // A missing or signed-only preset is our fault, not the guest's, so
+        // it must not read as "your photo was no good".
+        toast.error(
+          /preset/i.test(detail)
+            ? "Photo uploads aren't set up correctly yet. Please tell the committee."
+            : `That upload didn't work — ${detail}`,
+        );
+        return;
+      }
 
       onChange(json.secure_url);
       toast.success("Photo added.");
-    } catch {
-      toast.error("That upload didn't work. Try again.");
+    } catch (err) {
+      console.error("Cloudinary upload failed:", err);
+      toast.error("That upload didn't work. Check your connection and try again.");
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
