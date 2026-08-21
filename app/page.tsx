@@ -127,7 +127,9 @@ export default async function LandingPage() {
 
   const eventName = stats?.event_name ?? "FYB Dinner Night";
   const totalSeats = stats?.total_seats ?? 300;
-  const registerHref = user ? "/continue" : "/login";
+  // Every "Register" call to action opens the create-account tab; the nav's
+  // separate "Sign In" is the door for people who already have a seat.
+  const registerHref = user ? "/continue" : "/login?mode=signup";
 
   return (
     <>

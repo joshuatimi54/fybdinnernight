@@ -42,7 +42,11 @@ function LoginForm() {
   const params = useSearchParams();
   const next = params.get("next");
 
-  const [mode, setMode] = useState<Mode>("signin");
+  // ?mode=signup lands straight on the create-account tab, so "Register" and
+  // "Sign in" can be two separate doors that both come here.
+  const [mode, setMode] = useState<Mode>(
+    params.get("mode") === "signup" ? "signup" : "signin",
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");

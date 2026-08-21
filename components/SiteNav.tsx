@@ -67,9 +67,23 @@ export default function SiteNav({ signedIn }: { signedIn: boolean }) {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3 shrink-0">
-          <Link href={signedIn ? "/continue" : "/login"} className="btn btn-primary">
-            {signedIn ? "My Dinner" : "Register"}
-          </Link>
+          {signedIn ? (
+            <Link href="/continue" className="btn btn-primary">
+              My Dinner
+            </Link>
+          ) : (
+            <>
+              {/* Returning guests need their own door. Without this they have
+                  to click "Register" and spot a tab, which reads as though
+                  they are being asked to sign up twice. */}
+              <Link href="/login" className="btn btn-ghost">
+                Sign In
+              </Link>
+              <Link href="/login?mode=signup" className="btn btn-primary">
+                Register
+              </Link>
+            </>
+          )}
         </div>
 
         {/* ---------------------------------------------------------- burger */}
@@ -118,13 +132,32 @@ export default function SiteNav({ signedIn }: { signedIn: boolean }) {
               {l.label}
             </Link>
           ))}
-          <Link
-            href={signedIn ? "/continue" : "/login"}
-            onClick={() => setOpen(false)}
-            className="btn btn-primary mt-4"
-          >
-            {signedIn ? "My Dinner" : "Register"}
-          </Link>
+          {signedIn ? (
+            <Link
+              href="/continue"
+              onClick={() => setOpen(false)}
+              className="btn btn-primary mt-4"
+            >
+              My Dinner
+            </Link>
+          ) : (
+            <div className="flex flex-col gap-2 mt-4">
+              <Link
+                href="/login?mode=signup"
+                onClick={() => setOpen(false)}
+                className="btn btn-primary"
+              >
+                Register
+              </Link>
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="btn btn-ghost"
+              >
+                Sign In
+              </Link>
+            </div>
+          )}
         </nav>
       ) : null}
     </header>
