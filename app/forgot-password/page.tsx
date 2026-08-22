@@ -21,6 +21,9 @@ export default function ForgotPasswordPage() {
     setBusy(true);
     const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(address, {
+      // Deliberately window.location.origin, not NEXT_PUBLIC_SITE_URL: the
+      // PKCE verifier is stored per-origin, so the link has to come back to
+      // the same host the request was made from or the exchange cannot work.
       redirectTo: `${window.location.origin}/auth/callback?next=/update-password`,
     });
     setBusy(false);

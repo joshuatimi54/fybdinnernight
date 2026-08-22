@@ -21,9 +21,15 @@ export async function GET(request: Request) {
   const supabase = await createClient();
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
-  if (error) {
-    return NextResponse.redirect(new URL("/login?error=expired_link", url.origin));
+  if (!error) {
+    return NextResponse.redirect(new URL(next, url.origin));
   }
 
-  return NextResponse.redirect(new URL(next, url.origin));
+  // A PKCE exchange fails here whenever the verifier cookie is missing —
+  // which is exactly what happens when the reset was requested on one origin
+  // and the link returns to another. The browser that asked still holds the
+  // verifier, so hand the code on and let the page finish the exchange.
+  const onward = new URL(next, url.origin);
+  onward.searchParams.set("code", code);
+  return NextResponse.redirect(onward);
 }

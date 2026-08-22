@@ -16,11 +16,38 @@ export default function UpdatePasswordPage() {
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState<boolean | null>(null);
 
-  // The reset link is exchanged for a session by /auth/callback before we get
-  // here. No session means the link was stale or already used.
+  /**
+   * Establish the session before showing the form.
+   *
+   * Supabase uses PKCE, and the code verifier is stored per-origin by the
+   * browser. If the reset link comes back to a different origin than the one
+   * that requested it, a server-side exchange has no verifier and always
+   * fails — so the exchange is done here, in the browser, and we accept the
+   * `code` wherever it lands rather than only at /auth/callback.
+   */
   useEffect(() => {
     const supabase = createClient();
-    void supabase.auth.getUser().then(({ data }) => setReady(Boolean(data.user)));
+
+    void (async () => {
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get("code");
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        // Strip the code from the address bar either way: it is single-use,
+        // and leaving it there means a refresh looks like a second failure.
+        window.history.replaceState({}, "", "/update-password");
+
+        if (error) {
+          console.error("Reset code exchange failed:", error.message);
+          setReady(false);
+          return;
+        }
+      }
+
+      const { data } = await supabase.auth.getUser();
+      setReady(Boolean(data.user));
+    })();
   }, []);
 
   async function submit(e: React.FormEvent) {
