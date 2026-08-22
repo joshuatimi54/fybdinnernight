@@ -6,9 +6,9 @@ export const dynamic = "force-dynamic";
 /**
  * Fallback for expiry when pg_cron isn't available on the Supabase plan.
  *
- * Wire it to a Vercel Cron (see vercel.json). Vercel signs its own cron
- * requests with CRON_SECRET; anything else must present it as a bearer token,
- * so this cannot be triggered by a passer-by.
+ * Called on a schedule by netlify/functions/expire-invitations.mts, which
+ * presents CRON_SECRET as a bearer token — so this cannot be triggered by a
+ * passer-by who happens to guess the path.
  */
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;

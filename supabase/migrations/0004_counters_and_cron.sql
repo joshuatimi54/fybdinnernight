@@ -62,7 +62,8 @@ alter publication supabase_realtime add table public_counters;
 --
 -- Requires the pg_cron extension (Supabase: Database -> Extensions -> pg_cron).
 -- If pg_cron is unavailable on your plan, call expire_invitations() from a
--- Vercel Cron hitting /api/cron/expire-invitations instead.
+-- Netlify scheduled function hitting /api/cron/expire-invitations instead
+-- (see netlify/functions/expire-invitations.mts).
 do $$
 begin
   if exists (select 1 from pg_available_extensions where name = 'pg_cron') then

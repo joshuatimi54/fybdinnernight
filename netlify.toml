@@ -1,0 +1,28 @@
+# =============================================================================
+# FYB Dinner Night — Netlify
+# =============================================================================
+# vercel.json is ignored here, so the scheduled work lives in
+# netlify/functions/*.mts instead. Without those, the email outbox never
+# drains, invitations never expire, and the nudge never goes out — all
+# silently, because nothing errors when a cron simply does not exist.
+# =============================================================================
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Deploy previews get their own URL, and a reset link generated there points
+# back at that preview. Fine for testing, confusing in production — set
+# NEXT_PUBLIC_SITE_URL per-context in the Netlify UI.
+[context.production.environment]
+  NEXT_PUBLIC_SITE_URL = "https://fybdinnernight.online"
